@@ -11,8 +11,7 @@ import javax.persistence.Id;
 @Table(name = "products")
 public class products {
  @Id
- @Column(name = "barcode")
- @GeneratedValue(strategy=GenerationType.AUTO)
+ @Column(name = "barcode", nullable = false)
 public String barcode;
  @Column(name = "name") 
   public String title;

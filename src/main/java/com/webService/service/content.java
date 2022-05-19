@@ -45,6 +45,8 @@ public class content {
 	cashreg Cash;
 	products Prods;
 	@Autowired
+	private productsrepository Products;
+	@Autowired
 	private cashregrepository Users;
 
 	@Autowired
@@ -63,11 +65,10 @@ public class content {
 	@RequestMapping("/getProduct")
 	public RedirectView getProduct(@RequestParam("barcode") String code) {
 		String bcode;
-		if(bcode.equals(code)) {
-
-			System.out.println(code);
-		}
-		return new RedirectView("/getProduct");
+		Prods=Products.getById(code);
+		
+		System.out.println(Prods.price);
+		return new RedirectView("/cash");
 		
 	}
 

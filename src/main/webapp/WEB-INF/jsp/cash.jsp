@@ -10,7 +10,7 @@
 <title>Kasa nr ${uid}</title>
 </head>
 <body>
-<p>aaa</p>
+<p>${barcode}</p>
 	<form method="post" action="/getProduct">
 		<input type="text" name="barcode" placeholder="Barcode"></input>
 		<input type="submit" value="Beep!">
