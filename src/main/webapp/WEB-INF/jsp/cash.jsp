@@ -7,15 +7,13 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>${currentproductname} - Sklep</title>
+<title>Kasa nr ${uid}</title>
 </head>
 <body>
-	<img id="gallery" src="${currentproductname}"></img>
-	<h1 id="title">${currentproductname}</h1>
-	<p style="float:left" id="description">${currentproductdesc}</p>
-	<p style="float:left" id="price">${currentproductprice}</p>
-	<div id="content">
-	
-	</div>
-</body>
+<p>aaa</p>
+	<form method="post" action="/getProduct">
+		<input type="text" name="barcode" placeholder="Barcode"></input>
+		<input type="submit" value="Beep!">
+	</form>
+	</body>
 </html>

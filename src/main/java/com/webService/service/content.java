@@ -37,18 +37,16 @@ public class content {
 	
 	//private user ActiveUser = new user();
 	
+	public boolean LogError = false;
 	private shopentity CurrentProduct = new shopentity();
 	private shopentitycontent CurrentProductContent = new shopentitycontent();
 	private shopentityinfo CurrentProductInfo = new shopentityinfo();
-	
+
+	cashreg Cash;
+	products Prods;
 	@Autowired
 	private cashregrepository Users;
-	@Autowired
-	private shopentityrepository Products;
-	@Autowired
-	private shopentitycontentrepository ProductsContent;
-	@Autowired
-	private shopentityinforepository ProductsInfo;
+
 	@Autowired
 //	private login loginInterface;
 	@RequestMapping("/main")
@@ -56,53 +54,52 @@ public class content {
 		return new ModelAndView("main");
 	}
 	
-	@RequestMapping("/product")
-	public ModelAndView product() {
-		return new ModelAndView("product");
+	@RequestMapping("/cash")
+	public ModelAndView cash() {
+		return new ModelAndView("cash");
 	}
-   /*@RequestMapping("/login")
-    @ResponseBody
-    public String login(@RequestParam("uid") String loginP, @RequestParam("upass") String passwordP) {
-    	if(loginInterface.logIn(loginP,passwordP,Users,ActiveUser))
-    		return "Zalogowano Pomyślnie!";
-    	return loginP+" "+passwordP;
-    }*/
+	
+	
+	@RequestMapping("/getProduct")
+	public RedirectView getProduct(@RequestParam("barcode") String code) {
+		String bcode;
+		if(bcode.equals(code)) {
+
+			System.out.println(code);
+		}
+		return new RedirectView("/getProduct");
+		
+	}
 
     @RequestMapping("/login")
     @ResponseBody
-    public RedirectView hello2(@RequestParam("upass") String pass,@RequestParam("uid") String id,Model model) {
-    	String pom;
-    	cashreg Cash;
+    public RedirectView logon(@RequestParam("upass") String pass,@RequestParam("uid") String id,Model model) {
+    	String password;
+		if(LogError == true) {
+			setError(model,"loginerror");
+		}
+		LogError = false;
     		Cash=Users.getById(Integer.valueOf(id));
-    		pom=Cash.getPassword();
-    		if(pom.equals(pass)) {
-    			return new RedirectView("/product");
+    		password=Cash.getPassword();
+    		if(password.equals(pass)) {
+    			LogError = false;
+    			model.asMap().clear();
+    			return new RedirectView("/cash");
     			
     		}
     		else {
-    			setError(model);
+    			LogError = true;
+
     			return new RedirectView("/main");
     			
     		}
+
     }
-    
-    @ModelAttribute
-    public void setError(Model model) {
-    	model.addAttribute("war", true);
+    @ModelAttribute 
+    public void setError(Model model, String error) {
     	model.addAttribute("loginerror","Błędny login i/lub hasło");
     }
     
-    /*@GetMapping("/product/view/{id}")
-    @ResponseBody
-    public ModelAndView productViewMethod(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
-    	CurrentProduct = Products.getById(id);
-    	System.out.println(CurrentProduct.getName());
-    	CurrentProductContent = ProductsContent.getById(id);
-    	//CurrentProductInfo = ProductsInfo.getById(id);
-    	redirectAttributes.addFlashAttribute("currentproduct", CurrentProduct);
-    	redirectAttributes.addFlashAttribute("currentproductcontent", CurrentProductContent);
-        return new ModelAndView("product");
-    }*/
     @GetMapping(path="/all")
     public @ResponseBody List<cashreg> getAllProducts() {
     	return Users.findAll();
