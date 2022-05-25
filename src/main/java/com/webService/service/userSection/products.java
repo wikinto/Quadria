@@ -42,4 +42,9 @@ public String getName() {
 public void setName(String title) {
 	this.title = title;
 }
+@Override
+public String toString()
+{
+	return "<div class=\"rach\">"+title+"<p>"+price+"</p></div>";
+}
 }

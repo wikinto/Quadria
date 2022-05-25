@@ -12,8 +12,16 @@
 <body>
 <p>${barcode}</p>
 	<form method="post" action="/getProduct">
-		<input type="text" name="barcode" placeholder="Barcode"></input>
+		<input type="text" name="barcode" id="barcode" placeholder="Barcode"></input>
 		<input type="submit" value="Beep!">
+		<div id="toPrint">
+		<c:forEach var="i" items="${rach}">
+			${i}		
+		</c:forEach>
+		</div>
 	</form>
+	<div id="script">
+	<script>document.getElementById("barcode").focus();document.getElementById("script").innerHTML=""</script>
+	</div>
 	</body>
 </html>

@@ -42,8 +42,8 @@ public class content {
 	private shopentity CurrentProduct = new shopentity();
 	private shopentitycontent CurrentProductContent = new shopentitycontent();
 	private shopentityinfo CurrentProductInfo = new shopentityinfo();
-	
-	List<products> rach = new ArrayList<>();
+	private List<object> rachunek = new ArrayList<>();
+	private object pom=new object();
 
 	cashreg Cash;
 	products Prods;
@@ -70,12 +70,23 @@ public class content {
 	@RequestMapping("/getProduct")
 	public RedirectView getProduct(@RequestParam("barcode") String code) {
 		String bcode;
+		boolean Added=false;
+		pom=new object();
 		if(code.length() < 11)
 			Prods = Products.getById(code);
 		else
 		Prods=Products.getByBarcode(code);
-		
-		rach.add(Prods);
+		pom.rach = Prods;
+		pom.ilosc+=1;
+		for(int i=0;i<rachunek.size();i++)
+		if(rachunek.get(i).eqmet(pom))
+		{
+			rachunek.get(i).ilosc+=1;
+			Added=true;
+		}
+		if(Added==false) {
+			rachunek.add(pom);
+		}
 		return new RedirectView("/cash");
 		
 	}
@@ -104,7 +115,7 @@ public class content {
     public void setError(Model model) {
     	model.addAttribute("loginerror",LogError);
     	model.addAttribute("uid",UID);
-    	model.addAttribute("rach",rach);
+    	model.addAttribute("rach",rachunek);
     }
     
     @GetMapping(path="/all")
