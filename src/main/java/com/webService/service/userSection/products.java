@@ -11,26 +11,30 @@ import javax.persistence.Id;
 @Table(name = "products")
 public class products {
  @Id
+ @Column(name = "plu")
+ private int plu;
  @Column(name = "barcode", nullable = false)
-public String barcode;
+ private String barcode;
  @Column(name = "name") 
-  public String title;
+ private String title;
  @Column(name = "price") 
- public float price;
+ private float price;
  
-  public String getId() {
-    return barcode;
+  public int getId() {
+    return plu;
   }
   
   public float getPrice() {
 	    return price;
-	  }
+  }
   
-  public void setId(String barcode) {
-	    this.barcode=barcode;
-	  }
+  public void setId(int plu) {
+	    this.plu=plu;
+  }
 
-
+  public void setBarcode(String barcode) {
+	  this.barcode=barcode;
+  }
 public String getName() {
 	return title;
 }

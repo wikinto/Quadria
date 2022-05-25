@@ -38,9 +38,12 @@ public class content {
 	//private user ActiveUser = new user();
 	
 	private boolean LogError = false;
+	private String UID="0";
 	private shopentity CurrentProduct = new shopentity();
 	private shopentitycontent CurrentProductContent = new shopentitycontent();
 	private shopentityinfo CurrentProductInfo = new shopentityinfo();
+	
+	List<products> rach = new ArrayList<>();
 
 	cashreg Cash;
 	products Prods;
@@ -58,6 +61,8 @@ public class content {
 	
 	@RequestMapping("/cash")
 	public ModelAndView cash() {
+		if("0".equals(UID))
+			return firstPage();
 		return new ModelAndView("cash");
 	}
 	
@@ -65,9 +70,12 @@ public class content {
 	@RequestMapping("/getProduct")
 	public RedirectView getProduct(@RequestParam("barcode") String code) {
 		String bcode;
-		Prods=Products.getById(code);
+		if(code.length() < 11)
+			Prods = Products.getById(code);
+		else
+		Prods=Products.getByBarcode(code);
 		
-		System.out.println(Prods.price);
+		rach.add(Prods);
 		return new RedirectView("/cash");
 		
 	}
@@ -80,6 +88,7 @@ public class content {
     		password=Cash.getPassword();
     		if(password.equals(pass)) {
     			LogError = false;
+    			UID=id;
     			return new RedirectView("/cash");
     			
     		}
@@ -94,6 +103,8 @@ public class content {
     @ModelAttribute 
     public void setError(Model model) {
     	model.addAttribute("loginerror",LogError);
+    	model.addAttribute("uid",UID);
+    	model.addAttribute("rach",rach);
     }
     
     @GetMapping(path="/all")
