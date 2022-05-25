@@ -37,7 +37,7 @@ public class content {
 	
 	//private user ActiveUser = new user();
 	
-	public boolean LogError = false;
+	private boolean LogError = false;
 	private shopentity CurrentProduct = new shopentity();
 	private shopentitycontent CurrentProductContent = new shopentitycontent();
 	private shopentityinfo CurrentProductInfo = new shopentityinfo();
@@ -74,17 +74,12 @@ public class content {
 
     @RequestMapping("/login")
     @ResponseBody
-    public RedirectView logon(@RequestParam("upass") String pass,@RequestParam("uid") String id,Model model) {
+    public RedirectView logon(@RequestParam("upass") String pass,@RequestParam("uid") String id) {
     	String password;
-		if(LogError == true) {
-			setError(model,"loginerror");
-		}
-		LogError = false;
     		Cash=Users.getById(Integer.valueOf(id));
     		password=Cash.getPassword();
     		if(password.equals(pass)) {
     			LogError = false;
-    			model.asMap().clear();
     			return new RedirectView("/cash");
     			
     		}
@@ -97,8 +92,8 @@ public class content {
 
     }
     @ModelAttribute 
-    public void setError(Model model, String error) {
-    	model.addAttribute("loginerror","Błędny login i/lub hasło");
+    public void setError(Model model) {
+    	model.addAttribute("loginerror",LogError);
     }
     
     @GetMapping(path="/all")

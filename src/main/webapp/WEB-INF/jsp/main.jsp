@@ -13,7 +13,9 @@
 		<input type="password" name="upass" placeholder="Hasło dostępu"></input>
 		<input type="submit" value="Zaloguj się">
 	</form>
-		<p>${loginerror}</p>
+		<c:if test="${loginerror==true }">
+			<p>Błędny login i/lub hasło</p>
+		</c:if>
 </body>
 
 </html>
