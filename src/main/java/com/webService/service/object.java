@@ -9,7 +9,7 @@ public class object {
 	products rach = null;
 	int ilosc=0;
 	public String toString() {
-		return "<p>"+ilosc+"</p>"+rach.toString();
+		return "<div style=\"display: flex\">"+rach.toString(ilosc)+"</div>";
 	}
 	public boolean eqmet(object rachp) {
 		if(rach.getId()==rachp.rach.getId())

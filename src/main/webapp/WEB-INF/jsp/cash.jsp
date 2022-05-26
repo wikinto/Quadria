@@ -19,7 +19,9 @@
 			${i}		
 		</c:forEach>
 		</div>
+		<p>${total}</p>
 	</form>
+	<a href="/paragon">Wydruk</a>
 	<div id="script">
 	<script>document.getElementById("barcode").focus();document.getElementById("script").innerHTML=""</script>
 	</div>

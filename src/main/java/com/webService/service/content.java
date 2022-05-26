@@ -45,6 +45,7 @@ public class content {
 	private List<object> rachunek = new ArrayList<>();
 	private object pom=new object();
 
+	float totalprice;
 	cashreg Cash;
 	products Prods;
 	@Autowired
@@ -52,8 +53,6 @@ public class content {
 	@Autowired
 	private cashregrepository Users;
 
-	@Autowired
-//	private login loginInterface;
 	@RequestMapping("/main")
 	public ModelAndView firstPage() {
 		return new ModelAndView("main");
@@ -82,13 +81,28 @@ public class content {
 		if(rachunek.get(i).eqmet(pom))
 		{
 			rachunek.get(i).ilosc+=1;
+			totalprice += Products.getByBarcode(code).getPrice();
 			Added=true;
 		}
 		if(Added==false) {
 			rachunek.add(pom);
+			totalprice += Products.getByBarcode(code).getPrice();
 		}
+		System.out.println(totalprice);
 		return new RedirectView("/cash");
 		
+	}
+	@GetMapping("/paragon")
+	@ResponseBody
+	public String paragon() {
+		String pom = "";
+		if(rachunek.size()>0)
+		{
+			for(int i=0;i<rachunek.size();i++)
+				pom+=rachunek.get(i).toString();
+			return pom;
+		}
+		return "Pusty";
 	}
 
     @RequestMapping("/login")
@@ -116,6 +130,7 @@ public class content {
     	model.addAttribute("loginerror",LogError);
     	model.addAttribute("uid",UID);
     	model.addAttribute("rach",rachunek);
+    	model.addAttribute("total",totalprice);
     }
     
     @GetMapping(path="/all")

@@ -42,9 +42,8 @@ public String getName() {
 public void setName(String title) {
 	this.title = title;
 }
-@Override
-public String toString()
+public String toString(int ilosc)
 {
-	return "<div class=\"rach\">"+title+"<p>"+price+"</p></div>";
+	return "<div class=\"rach\">"+title+" - "+price+" * "+ ilosc +"</div>";
 }
 }
