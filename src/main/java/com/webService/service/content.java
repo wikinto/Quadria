@@ -51,9 +51,10 @@ public class content {
 
 	@RequestMapping("/main")
 	public ModelAndView firstPage(HttpServletRequest request) {
+		//if(!"0".equals(request.getSession().getAttribute("uid")))
+			//return cash(request);
 		return new ModelAndView("main");
 	}
-	
 	@RequestMapping("/cash")
 	public ModelAndView cash(HttpServletRequest request) {
 		if("0".equals(request.getSession().getAttribute("uid")))
@@ -64,8 +65,9 @@ public class content {
 	
 	@RequestMapping("/getProduct")
 	public RedirectView getProduct(@RequestParam("barcode") String code,HttpServletRequest request) {
-		String bcode;
 		boolean Added=false;
+		request.getSession().removeAttribute("bcerror");
+
 		object pom=new object();
 		if(code.length() < 11)
 			Prods = Products.getById(code);
@@ -73,6 +75,9 @@ public class content {
 		Prods=Products.getByBarcode(code);
 		pom.rach = Prods;
 		pom.ilosc+=1;
+		if(pom.rach==null)
+			request.getSession().setAttribute("bcerror", "Nie znaleziono produktu w bazie");
+		else {
 		for(int i=0;i<rachunek.get(request.getSession().getAttribute("uid").toString()).size();i++)
 		if(rachunek.get(request.getSession().getAttribute("uid").toString()).get(i).eqmet(pom))
 		{
@@ -85,7 +90,7 @@ public class content {
 			request.getSession().setAttribute("total", (Float.valueOf(request.getSession().getAttribute("total").toString())+Products.getByBarcode(code).getPrice()));
 			rachunek.get(request.getSession().getAttribute("uid").toString()).add(pom);
 			//totalprice += Products.getByBarcode(code).getPrice();
-		}
+		}}
 		request.getSession().setAttribute("rach", rachunek.get(request.getSession().getAttribute("uid").toString()));
 		return new RedirectView("/cash");
 		

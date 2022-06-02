@@ -19,6 +19,9 @@
 			${i}		
 		</c:forEach>
 		</div>
+		<c:if test="${bcerror!=null }">
+		<p>${bcerror }</p>
+		</c:if>
 		<p>${total}</p>
 	</form>
 	<a href="/paragon">Wydruk</a>
