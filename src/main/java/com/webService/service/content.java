@@ -101,7 +101,7 @@ public class content {
 		String pom = "";
 		if(rachunek.get(request.getSession().getAttribute("uid").toString()).size()>0)
 		{
-			for(int i=0;i<rachunek.size();i++)
+			for(int i=0;i<rachunek.get(request.getSession().getAttribute("uid").toString()).size();i++)
 				pom+=rachunek.get(request.getSession().getAttribute("uid").toString()).get(i).toString();
 			return pom;
 		}
