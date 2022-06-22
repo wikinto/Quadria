@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import org.apache.tomcat.jni.Time;
 //import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,8 @@ import java.util.Map;
 import com.webService.service.userSection.*;
 import com.webService.service.shopSection.*;
 import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,7 +42,7 @@ public class content {
 	
 	//private user ActiveUser = new user();
 	
-	private Map<String,List<object>> rachunek = new HashMap<>();
+	private Map<String,List<object>> parag = new HashMap<>();
 
 	float totalprice;
 	cashreg Cash;
@@ -48,6 +51,8 @@ public class content {
 	private productsrepository Products;
 	@Autowired
 	private cashregrepository Users;
+	@Autowired
+	private rachunekrepository Rachunki;
 
 	@RequestMapping("/main")
 	public ModelAndView firstPage(HttpServletRequest request) {
@@ -57,7 +62,7 @@ public class content {
 	}
 	@RequestMapping("/cash")
 	public ModelAndView cash(HttpServletRequest request) {
-		if("0".equals(request.getSession().getAttribute("uid")))
+		if("0".equals(request.getSession().getAttribute("uid"))||request.getSession().getAttribute("uid")==null)
 			return firstPage(request);
 		return new ModelAndView("cash");
 	}
@@ -78,31 +83,51 @@ public class content {
 		if(pom.rach==null)
 			request.getSession().setAttribute("bcerror", "Nie znaleziono produktu w bazie");
 		else {
-		for(int i=0;i<rachunek.get(request.getSession().getAttribute("uid").toString()).size();i++)
-		if(rachunek.get(request.getSession().getAttribute("uid").toString()).get(i).eqmet(pom))
+		for(int i=0;i<parag.get(request.getSession().getAttribute("uid").toString()).size();i++)
+		if(parag.get(request.getSession().getAttribute("uid").toString()).get(i).eqmet(pom))
 		{
-			rachunek.get(request.getSession().getAttribute("uid").toString()).get(i).ilosc+=1;
-			request.getSession().setAttribute("total", (Float.valueOf(request.getSession().getAttribute("total").toString())+Products.getByBarcode(code).getPrice()));
+			float TTPrice =(Float.valueOf(request.getSession().getAttribute("total").toString())+Products.getByBarcode(code).getPrice());
+			TTPrice*=100;
+			TTPrice=Math.round(TTPrice);
+			parag.get(request.getSession().getAttribute("uid").toString()).get(i).ilosc+=1;
+			request.getSession().setAttribute("total", (TTPrice/100));
 			//totalprice += Products.getByBarcode(code).getPrice();
 			Added=true;
 		}
 		if(Added==false) {
-			request.getSession().setAttribute("total", (Float.valueOf(request.getSession().getAttribute("total").toString())+Products.getByBarcode(code).getPrice()));
-			rachunek.get(request.getSession().getAttribute("uid").toString()).add(pom);
+			float TTPrice=(Float.valueOf(request.getSession().getAttribute("total").toString())+Products.getByBarcode(code).getPrice());
+			TTPrice*=100;
+			TTPrice=Math.round(TTPrice);
+			request.getSession().setAttribute("total", (TTPrice/100));
+			parag.get(request.getSession().getAttribute("uid").toString()).add(pom);
 			//totalprice += Products.getByBarcode(code).getPrice();
 		}}
-		request.getSession().setAttribute("rach", rachunek.get(request.getSession().getAttribute("uid").toString()));
+		request.getSession().setAttribute("rach", parag.get(request.getSession().getAttribute("uid").toString()));
 		return new RedirectView("/cash");
 		
 	}
 	@GetMapping("/paragon")
 	@ResponseBody
 	public String paragon(HttpServletRequest request) {
+		String numerRachunku="";
+		do {
+		numerRachunku=request.getSession().getAttribute("uid").toString();
+		numerRachunku+=""+LocalDate.now().getYear()+LocalDate.now().getMonthValue()+LocalDate.now().getDayOfMonth();
+		numerRachunku+=""+LocalTime.now().getHour()+LocalTime.now().getMinute()+LocalTime.now().getSecond();
+		}while(Rachunki.findByRachId(numerRachunku)!=null);
 		String pom = "";
-		if(rachunek.get(request.getSession().getAttribute("uid").toString()).size()>0)
+		if(parag.get(request.getSession().getAttribute("uid").toString()).size()>0)
 		{
-			for(int i=0;i<rachunek.get(request.getSession().getAttribute("uid").toString()).size();i++)
-				pom+=rachunek.get(request.getSession().getAttribute("uid").toString()).get(i).toString();
+			for(int i=0;i<parag.get(request.getSession().getAttribute("uid").toString()).size();i++) {
+				pom+=parag.get(request.getSession().getAttribute("uid").toString()).get(i).toString();
+				Rachunki.insertRachunek(numerRachunku, parag.get(request.getSession().getAttribute("uid").toString()).get(i).rach.getId(), parag.get(request.getSession().getAttribute("uid").toString()).get(i).ilosc);
+			}
+			pom+=request.getSession().getAttribute("total").toString();
+			pom+="<br><p>Numer Paragonu<br></p>"+numerRachunku+"<br><a href=\"./cash\">Powrót</a>";
+			List<object> obj = new ArrayList<>();
+			parag.replace(request.getSession().getAttribute("uid").toString(),obj);
+			request.getSession().setAttribute("total", 0);
+			request.getSession().removeAttribute("rach");
 			return pom;
 		}
 		return "Pusty";
@@ -118,7 +143,7 @@ public class content {
     		if(password.equals(pass)) {
     			request.getSession().setAttribute("loginerror", false);
     			request.getSession().setAttribute("uid", Cash.getId());
-    			rachunek.put(String.valueOf(Cash.getId()), obj);
+    			parag.put(String.valueOf(Cash.getId()), obj);
     			request.getSession().setAttribute("total", 0);
     			return new RedirectView("/cash");
     			
@@ -133,7 +158,7 @@ public class content {
     }
     @ModelAttribute 
     public void setError(Model model) {
-    	//model.addAttribute("rach",rachunek);
+    	//model.addAttribute("rach",parag);
     	//model.addAttribute("total",totalprice);
     }
     

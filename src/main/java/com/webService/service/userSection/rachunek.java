@@ -12,16 +12,29 @@ import javax.persistence.Id;
 public class rachunek {
  @Id
  private int id;
- private int id_prod;
+ private int numerRachunku;
+ private String id_prod;
  private int ilosc;
  
   public int getId() {
     return id;
   }
-  public int getProdId() {
+  public String getProdId() {
 	  return id_prod;
   }
   public int getQuantity() {
 	  return ilosc;
   }
+  public void setQuantity(int ilosc) {
+	  this.ilosc=ilosc;
+  }
+  public void setProdId(String plu) {
+	  this.id_prod = plu;
+  }
+public int getNumerRachunku() {
+	return numerRachunku;
+}
+public void setNumerRachunku(int numerRachunku) {
+	this.numerRachunku = numerRachunku;
+}
 }

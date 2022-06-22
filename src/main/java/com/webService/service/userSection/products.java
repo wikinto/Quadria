@@ -44,6 +44,17 @@ public void setName(String title) {
 }
 public String toString(int ilosc)
 {
-	return "<div class=\"rach\">"+title+" - "+price+" * "+ ilosc +"</div>";
+	String pom="";
+	pom=String.valueOf(price);
+	int i=0;
+	if(!pom.isBlank())
+		i=pom.lastIndexOf(".");
+	if(i!=0) {
+	if(pom.length()-i==2)
+		pom+="0";
+	}
+	else
+		pom+=".00";
+	return "<div class=\"rach\">"+title+" - "+pom+" * "+ ilosc +"</div>";
 }
 }
